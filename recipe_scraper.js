@@ -1,7 +1,8 @@
 "use strict";
 
 var url = new URL(window.location.href);
-var b = url.searchParams.get("r").substring(1); //"remove leading `"` 
+var b = JSON.parse(url.searchParams.get("r")); //"remove leading `"`
+
 
 var body = document.getElementById("recipe");
 
@@ -53,9 +54,10 @@ var avoid = [
 	'recipes'
 ]
 
-b = b.split(/\\n/g);
+
+b.body = b.body.split(/\n/g);
 // Remove empty lines
-b = b.filter(element => {
+b.body = b.body.filter(element => {
 	return element.match(/\w/g);
 });
 
@@ -64,7 +66,8 @@ var i = 0;
 var content = {};
 var key = 'empty';
 body.innerHTML = '';
-b = b.reduce(function(total, cur, currentIndex, arr){
+body.innerHTML += `<h1>${b.title}</h1>`
+b.body = b.body.reduce(function(total, cur, currentIndex, arr){
 	if(cur.endsWith('<br /><br />')) return total;
 
 	if (headings.some(v => cur.toLowerCase().startsWith(v))) {

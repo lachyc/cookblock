@@ -1,6 +1,20 @@
 javascript: (function () {
 	javascript: (function () {
-		var sections = document.getElementsByTagName("SECTION");
+		var recipe = {};
+		const sections = document.getElementsByTagName("SECTION");
+		const metas = document.getElementsByTagName('meta');
+
+		for (let i = 0; i < metas.length; i++) {
+			console.log(metas[i].getAttribute('property'));
+			if( metas[i].getAttribute('property') == "og:title" ) {
+				recipe.title = metas[i].getAttribute('content');
+			}
+		}
+
+		if( !recipe.title ) {
+			console.log('Could not find title.');
+		}
+
 
 		var headings = [
 			'ingredient',
@@ -48,19 +62,18 @@ javascript: (function () {
 			'recipes'
 		];
 
-		var b = '';
-
+		recipe.body = '';
 		for (let i = 0; i < sections.length; i++) {
 			const e = sections[i].innerText;
 			if (headings.some(v => e.toLowerCase().includes(v))) {
 				if (!avoid.some(v => e.toLowerCase().includes(v))) {
-					b += e.trim() + '\n'.replace(/\n{3,}/g, '\n');
+					recipe.body += e.trim() + '\n'.replace(/\n{3,}/g, '\n');
 				}
 			}
 		}
-		console.log(b);
+		console.log(recipe);
 
 
-		window.open(`http://http://young-clone.bnr.la/?r=${encodeURIComponent(JSON.stringify(b))}`);
+		window.open(`http://localhost:5501/?r=${encodeURIComponent(JSON.stringify(recipe))}`);
 	})()
 })();
