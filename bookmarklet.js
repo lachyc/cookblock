@@ -46,7 +46,7 @@ javascript: (function () {
 			'recommended',
 			'people', //taste
 			'recipes'
-		]
+		];
 
 		var b = '';
 
