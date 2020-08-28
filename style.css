@@ -1,0 +1,16 @@
+* {
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+body {
+}
+
+#recipe {
+	width: 25em;
+	margin: auto;
+	padding: 1em;
+	border: 1px solid lightgrey;
+	background-color: rgb(245, 245, 245);
+	border-radius: 1em;
+    text-align: left;
+}
