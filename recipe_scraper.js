@@ -67,6 +67,7 @@ var content = {};
 var key = 'empty';
 body.innerHTML = '';
 body.innerHTML += `<h1>${b.title}</h1>`
+body.innerHTML += `<img alt="${b.title}" src="${b.img}" />`
 b.body = b.body.reduce(function(total, cur, currentIndex, arr){
 	if(cur.endsWith('<br /><br />')) return total;
 

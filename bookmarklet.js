@@ -2,20 +2,28 @@ javascript: (function () {
 	javascript: (function () {
 		var recipe = {};
 		const sections = document.getElementsByTagName("SECTION");
+		
+		// Get title from meta tags
 		const metas = document.getElementsByTagName('meta');
-
 		for (let i = 0; i < metas.length; i++) {
 			console.log(metas[i].getAttribute('property'));
 			if( metas[i].getAttribute('property') == "og:title" ) {
 				recipe.title = metas[i].getAttribute('content');
 			}
 		}
-
 		if( !recipe.title ) {
 			console.log('Could not find title.');
+		} else {
+			const imgs = document.getElementsByTagName('img');
+			for (let i = 0; i < imgs.length; i++) {
+				const tag = imgs[i];
+				console.log(tag);
+				if( tag.getAttribute('alt') && tag.getAttribute('alt').includes( recipe.title) ) {
+					recipe.img = 'http:' + tag.getAttribute( 'data-imagesrc' ); // img loaded as data-imagesrc="//aucdn.ar-cdn.com/ here - view-source:http://allrecipes.com.au/recipe/12464/lemon-coconut-slice.aspx
+					console.log(recipe.img);
+				}
+			}
 		}
-
-
 		var headings = [
 			'ingredient',
 			'ingredients',
