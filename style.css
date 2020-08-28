@@ -1,16 +1,40 @@
 * {
-	font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 body {
 }
 
 #recipe {
-	width: 25em;
-	margin: auto;
-	padding: 1em;
-	border: 1px solid lightgrey;
-	background-color: rgb(245, 245, 245);
-	border-radius: 1em;
-    text-align: left;
+  width: 25em;
+  margin: auto;
+  padding: 1em;
+  border: 1px solid lightgrey;
+  background-color: rgb(245, 245, 245);
+  border-radius: 1em;
+  text-align: left;
+}
+
+#instructions {
+  text-align: center;
+}
+
+#bookmarklet {
+  background-color: lightseagreen;
+  text-align: center;
+  margin: 1em auto auto auto;
+  border-radius: 1em;
+  width: 16em;
+  text-decoration: none;
+  color: white;
+}
+
+@media only screen and (max-width: 450px) {
+	#recipe {
+	  width: 90% !important;
+	}
+  
+	#bookmarklet {
+		width: 80%;
+	}
 }

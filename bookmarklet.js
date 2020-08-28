@@ -13,6 +13,16 @@ javascript: (function () {
 		];
 		
 		var avoid = [
+			'2000',
+			'2001',
+			'2002',
+			'2003',
+			'2004',
+			'2005',
+			'2006',
+			'2007',
+			'2008',
+			'2009',
 			'2010',
 			'2011',
 			'2012',
@@ -29,7 +39,6 @@ javascript: (function () {
 			'2023',
 			'2024',
 			'comment',
-			'i made it', // allrecipes
 			'magazine',
 			'close dialog',
 			'subscribe',
@@ -37,7 +46,7 @@ javascript: (function () {
 			'recommended',
 			'people', //taste
 			'recipes'
-		];
+		]
 
 		var b = '';
 
@@ -46,13 +55,12 @@ javascript: (function () {
 			if (headings.some(v => e.toLowerCase().includes(v))) {
 				if (!avoid.some(v => e.toLowerCase().includes(v))) {
 					b += e.trim() + '\n'.replace(/\n{3,}/g, '\n');
-					
 				}
 			}
 		}
 		console.log(b);
 
 
-		window.open(`http://localhost:5501/?sections=${encodeURIComponent(JSON.stringify(b))}`);
+		window.open(`http://http://young-clone.bnr.la/?r=${encodeURIComponent(JSON.stringify(b))}`);
 	})()
 })();
