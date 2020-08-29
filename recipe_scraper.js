@@ -1,109 +1,44 @@
 "use strict";
 
 var url = new URL(window.location.href);
-var b = JSON.parse(url.searchParams.get("r")); //"remove leading `"`
+var recipe = JSON.parse(url.searchParams.get("r"));
+
+var page = {};
+page.appDiv = document.getElementById("app");
+page.recipeDiv = document.getElementById("recipe");
+
+if( !recipe ) {
+	page.recipeDiv.setAttribute('hidden', 1);
+} else {
 
 
-var body = document.getElementById("recipe");
+	page.name = document.getElementById("name");
+	page.prepTime = document.getElementById("prepTime");
+	page.cookTime = document.getElementById("cookTime");
+	//page.totalTime = document.getElementById("totalTime");
+	page.recipeYield = document.getElementById("recipeYield");
+	page.recipeYieldHeading = document.getElementById("recipeYieldHeading");
+	page.image = document.getElementById("image");
+	page.recipeIngredient = document.getElementById("recipeIngredient");
+	page.recipeInstructions = document.getElementById("recipeInstructions");
 
-var steps = /step \d/gi; 
-var headings = [
-	'ingredient',
-	'ingredients',
-	'method',
-	'recipe',
-	'directions', //allrecipes
-	'instructions',
-	'prep' //allrecipes
-];
-
-var avoid = [
-	'2000',
-	'2001',
-	'2002',
-	'2003',
-	'2004',
-	'2005',
-	'2006',
-	'2007',
-	'2008',
-	'2009',
-	'2010',
-	'2011',
-	'2012',
-	'2013',
-	'2014',
-	'2015',
-	'2016',
-	'2017',
-	'2018',
-	'2019',
-	'2020',
-	'2021',
-	'2022',
-	'2023',
-	'2024',
-	'comment',
-	'i made it print', // allrecipes
-	'magazine',
-	'close dialog',
-	'subscribe',
-	'$',
-	'recommended',
-	'people', //taste
-	'recipes'
-]
-
-
-b.body = b.body.split(/\n/g);
-// Remove empty lines
-b.body = b.body.filter(element => {
-	return element.match(/\w/g);
-});
-
-// Remove non-recipe related lines
-var i = 0;
-var content = {};
-var key = 'empty';
-body.innerHTML = '';
-body.innerHTML += `<h1>${b.title}</h1>`
-body.innerHTML += `<img alt="${b.title}" src="${b.img}" />`
-b.body = b.body.reduce(function(total, cur, currentIndex, arr){
-	if(cur.endsWith('<br /><br />')) return total;
-
-	if (headings.some(v => cur.toLowerCase().startsWith(v))) {
-		key = cur;
-		content[key] = {};
-		content[key].text = cur;
-		content[key].items = [];
-		i = 0;
-
+	page.name.innerText = recipe.name;
+	page.prepTime.innerText = recipe.prepTime.match(/\d+/g)[0] + ' mins';
+	page.cookTime.innerText = recipe.cookTime.match(/\d+/g)[0] + ' mins';
+	//page.totalTime.innerText = recipe.totalTime;
+	if( recipe.recipeYield == "0") {
+		page.recipeYieldHeading.setAttribute('hidden', 1);
 	} else {
-		content[key].items.push(cur);
-		i ++;
+		page.recipeYield.innerText = recipe.recipeYield;
 	}
+	page.image.setAttribute('src', recipe.image.url);
 
-	return total+cur;
-}, "")
+	recipe.recipeIngredient.forEach(item => {
+		page.recipeIngredient.innerHTML += `<li>${item}</li>`
+	});
 
-for (let i = 0; i < Object.keys(content).length; i++) {
-	const key = Object.keys(content)[i];
+	recipe.recipeInstructions.forEach(item => {
+		page.recipeInstructions.innerHTML += `<li>${item}</li>`
+	});
 
-	let section = content[key];
-	section.text = `<h2>${section.text}</h2>` // Headings
-	body.innerHTML += section.text;
-
-	for (let j = 0; j < section.items.length; j++) {
-		let item = section.items[j];
-		
-		if(item.match(steps)) {
-			item = `<strong>${item}</strong>`;
-		} else {
-			item = `<li>${item}</li>`
-		}
-		body.innerHTML += item;
-	}
-	
 }
-
-console.log(content);
