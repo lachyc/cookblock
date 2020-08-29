@@ -1,105 +1,102 @@
 "use strict";
 
 var url = new URL(window.location.href);
-var b = url.searchParams.get("r").substring(1); //"remove leading `"` 
+var recipe = JSON.parse(url.searchParams.get("r"));
 
-var body = document.getElementById("recipe");
+var page = {};
+page.appDiv = document.getElementById("app");
+page.recipeDiv = document.getElementById("recipe");
 
-var steps = /step \d/gi; 
-var headings = [
-	'ingredient',
-	'ingredients',
-	'method',
-	'recipe',
-	'directions', //allrecipes
-	'instructions',
-	'prep' //allrecipes
-];
+if( recipe ) {
+	page.recipeDiv.hidden = false;
 
-var avoid = [
-	'2000',
-	'2001',
-	'2002',
-	'2003',
-	'2004',
-	'2005',
-	'2006',
-	'2007',
-	'2008',
-	'2009',
-	'2010',
-	'2011',
-	'2012',
-	'2013',
-	'2014',
-	'2015',
-	'2016',
-	'2017',
-	'2018',
-	'2019',
-	'2020',
-	'2021',
-	'2022',
-	'2023',
-	'2024',
-	'comment',
-	'i made it print', // allrecipes
-	'magazine',
-	'close dialog',
-	'subscribe',
-	'$',
-	'recommended',
-	'people', //taste
-	'recipes'
-]
+	for (let i = 0; i < recipe.recipeIngredient.length; i++) {
+		const ingredient = recipe.recipeIngredient[i].text || recipe.recipeIngredient[i]; // nytimes returns object with 'text' key
 
-b = b.split(/\\n/g);
-// Remove empty lines
-b = b.filter(element => {
-	return element.match(/\w/g);
-});
+		recipe.recipeIngredient[i] = {};
+		recipe.recipeIngredient[i].measurement = {};
+		let curIngredient = recipe.recipeIngredient[i];
+		let curMeasurement = curIngredient.measurement;
 
-// Remove non-recipe related lines
-var i = 0;
-var content = {};
-var key = 'empty';
-body.innerHTML = '';
-b = b.reduce(function(total, cur, currentIndex, arr){
-	if(cur.endsWith('<br /><br />')) return total;
+		// Match entire measurement string
+		const measurements = ingredient.match(/^\d? ?\d+\/?\d? ?(tbsp|tsp|cup|g|ml|teaspoon|tablespoon|bunch|can)?s?[^()a-z]/gi);
+		if (measurements) {
 
-	if (headings.some(v => cur.toLowerCase().startsWith(v))) {
-		key = cur;
-		content[key] = {};
-		content[key].text = cur;
-		content[key].items = [];
-		i = 0;
+			const measurementStr = measurements[0].trim(); // includes whole number, fraction (if any) and unit
+			const fraction = measurementStr.match(/\d ?\/ ?\d/gi); // match _only_ fraction e.g not whole number
 
-	} else {
-		content[key].items.push(cur);
-		i ++;
-	}
+			if (fraction) {
+				const wholeNumberStr = measurementStr.match(/^\d[^\/]/gi); // match only whole value before fraction e.g 1 1/2
+				let wholeNumber = 0;
+				if (wholeNumberStr) {
+					wholeNumber = parseInt(wholeNumberStr[0][0]); // get only first char
+				}
+				const fractionArray = fraction[0].split('/');
+				const numerator = parseInt(fractionArray[0].trim());
+				const denominator = parseInt(fractionArray[1].trim());
 
-	return total+cur;
-}, "")
+				curMeasurement.wholeNumber = wholeNumber;
+				curMeasurement.fraction = fraction[0];
+				curMeasurement.decimal = numerator / denominator;
+				curMeasurement.value = measurementStr.match(/^\d? ?\d+\/?\d? ?/gi)[0]; // match only whole number and fraction
+				curMeasurement.unit = measurementStr.substring(curMeasurement.value.length).trim();
 
-for (let i = 0; i < Object.keys(content).length; i++) {
-	const key = Object.keys(content)[i];
+			} else {
+				const decimalStr = measurementStr.match(/^\d+/gi)[0]; // match number
+				curMeasurement.decimal = parseInt(decimalStr);
+				curMeasurement.value = curMeasurement.decimal;
+				curMeasurement.unit = measurementStr.substring(decimalStr.length)
+			}
 
-	let section = content[key];
-	section.text = `<h2>${section.text}</h2>` // Headings
-	body.innerHTML += section.text;
+			if (curMeasurement.unit.match(/teas\w+/gi)) { // broad 'teaspoon' wordings
+				curMeasurement.unit = 'tsp';
+			} else if (curMeasurement.unit.match(/tabl\w+/gi)) { // broad 'tablespoon' wordings
+				curMeasurement.unit = 'tbsp';
+			}
+			curIngredient.item = ingredient.substring(measurementStr.length);
 
-	for (let j = 0; j < section.items.length; j++) {
-		let item = section.items[j];
-		
-		if(item.match(steps)) {
-			item = `<strong>${item}</strong>`;
 		} else {
-			item = `<li>${item}</li>`
+			// No measurement
+			curIngredient.item = ingredient;
 		}
-		body.innerHTML += item;
 	}
-	
-}
 
-console.log(content);
+	page.name = document.getElementById("name");
+	page.prepTimeHeading = document.getElementById("prepTimeHeading");
+	page.prepTime = document.getElementById("prepTime");
+	page.cookTimeHeading = document.getElementById("cookTimeHeading");
+	page.cookTime = document.getElementById("cookTime");
+	//page.totalTime = document.getElementById("totalTime");
+	page.recipeYield = document.getElementById("recipeYield");
+	page.recipeYieldHeading = document.getElementById("recipeYieldHeading");
+	page.image = document.getElementById("image");
+	page.recipeIngredient = document.getElementById("recipeIngredient");
+	page.recipeInstructions = document.getElementById("recipeInstructions");
+
+	page.name.innerText = recipe.name;
+	if( recipe.prepTime ) {
+		page.prepTimeHeading.hidden = false;
+		page.prepTime.hidden = false;
+		page.prepTime.innerText = recipe.prepTime.match(/\d+/g)[0] + ' mins';
+	}
+	if( recipe.cookTime) {
+		page.cookTimeHeading.hidden = false;
+		page.cookTime.hidden = false;
+		page.cookTime.innerText = recipe.cookTime.match(/\d+/g)[0] + ' mins';
+	}
+	//page.totalTime.innerText = recipe.totalTime;
+	if( recipe.recipeYield && recipe.recipeYield == "0") {
+		page.recipeYieldHeading.hidden = false;
+		page.recipeYield.innerText = recipe.recipeYield;
+	}
+	page.image.setAttribute('src', recipe.image.url || recipe.image);
+
+	recipe.recipeIngredient.forEach(ingredient => {
+		page.recipeIngredient.innerHTML += `<tr><td class="ingredient-unit">${ingredient.measurement.value || ""} ${ingredient.measurement.unit || ""}</td><td>${ingredient.item.text || ingredient.item}</td></tr>`
+	});
+
+	recipe.recipeInstructions.forEach(item => {
+		page.recipeInstructions.innerHTML += `<li>${item.text || item}</li>`
+	});
+
+}

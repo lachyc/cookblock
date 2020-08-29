@@ -2,12 +2,22 @@
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-body {
+img {
+	width: 100%;
 }
 
-#recipe {
+li {
+	margin-top: 1em;
+}
+
+.ingredient-unit {
+	min-width: 5em;
+	text-align: right;
+}
+
+#recipe, #app {
   width: 25em;
-  margin: auto;
+  margin: 1em auto;
   padding: 1em;
   border: 1px solid lightgrey;
   background-color: rgb(245, 245, 245);

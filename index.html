@@ -5,15 +5,31 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
 	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="dev_style.css">
 </head>
 <body class="text-center">
-	<div id="recipe">
+	<div id="recipe" hidden>
+		<h1 id="name">name</h1>
+		<h3 id="prepTimeHeading" hidden>Prep Time</h3>
+		<span id="prepTime" hidden></span>
+		<h3 id="cookTimeHeading" hidden>Cook Time</h3>
+		<span id="cookTime" hidden></span>
+		<h3 id="recipeYieldHeading" hidden>Yield</h3>
+		<p id="recipeYield"></p>
+		<img id="image" />
+		<h2>Ingredients</h2>
+		<table id="recipeIngredient">
 
+		</table>
+		<h2>Instructions</h2>
+		<ol id="recipeInstructions"></ol>
+	</div>
+	<div id="app">
 		<span id="instructions">
 			Right-click and bookmark the link below. Open the bookmark while viewing a recipe to trim the fat.
 		</span>
 		<div id="bookmarklet">
-			<a href="javascript:(function%20()%20%7B%0A%09javascript%3A%20(function%20()%20%7B%0A%09%09var%20sections%20%3D%20document.getElementsByTagName(%22SECTION%22)%3B%0A%0A%09%09var%20headings%20%3D%20%5B%0A%09%09%09%27ingredient%27%2C%0A%09%09%09%27ingredients%27%2C%0A%09%09%09%27method%27%2C%0A%09%09%09%27recipe%27%2C%0A%09%09%09%27directions%27%2C%20%2F%2Fallrecipes%0A%09%09%09%27instructions%27%2C%0A%09%09%09%27prep%27%20%2F%2Fallrecipes%0A%09%09%5D%3B%0A%09%09%0A%09%09var%20avoid%20%3D%20%5B%0A%09%09%09%272000%27%2C%0A%09%09%09%272001%27%2C%0A%09%09%09%272002%27%2C%0A%09%09%09%272003%27%2C%0A%09%09%09%272004%27%2C%0A%09%09%09%272005%27%2C%0A%09%09%09%272006%27%2C%0A%09%09%09%272007%27%2C%0A%09%09%09%272008%27%2C%0A%09%09%09%272009%27%2C%0A%09%09%09%272010%27%2C%0A%09%09%09%272011%27%2C%0A%09%09%09%272012%27%2C%0A%09%09%09%272013%27%2C%0A%09%09%09%272014%27%2C%0A%09%09%09%272015%27%2C%0A%09%09%09%272016%27%2C%0A%09%09%09%272017%27%2C%0A%09%09%09%272018%27%2C%0A%09%09%09%272019%27%2C%0A%09%09%09%272020%27%2C%0A%09%09%09%272021%27%2C%0A%09%09%09%272022%27%2C%0A%09%09%09%272023%27%2C%0A%09%09%09%272024%27%2C%0A%09%09%09%27comment%27%2C%0A%09%09%09%27magazine%27%2C%0A%09%09%09%27close%20dialog%27%2C%0A%09%09%09%27subscribe%27%2C%0A%09%09%09%27%24%27%2C%0A%09%09%09%27recommended%27%2C%0A%09%09%09%27people%27%2C%20%2F%2Ftaste%0A%09%09%09%27recipes%27%0A%09%09%5D%0A%0A%09%09var%20b%20%3D%20%27%27%3B%0A%0A%09%09for%20(let%20i%20%3D%200%3B%20i%20%3C%20sections.length%3B%20i%2B%2B)%20%7B%0A%09%09%09const%20e%20%3D%20sections%5Bi%5D.innerText%3B%0A%09%09%09if%20(headings.some(v%20%3D%3E%20e.toLowerCase().includes(v)))%20%7B%0A%09%09%09%09if%20(!avoid.some(v%20%3D%3E%20e.toLowerCase().includes(v)))%20%7B%0A%09%09%09%09%09b%20%2B%3D%20e.trim()%20%2B%20%27%5Cn%27.replace(%2F%5Cn%7B3%2C%7D%2Fg%2C%20%27%5Cn%27)%3B%0A%09%09%09%09%7D%0A%09%09%09%7D%0A%09%09%7D%0A%09%09console.log(b)%3B%0A%0A%0A%09%09window.open(%60http%3A%2F%2Fyoung-clone.bnr.la%2F%3Fr%3D%24%7BencodeURIComponent(JSON.stringify(b))%7D%60)%3B%0A%09%7D)()%0A%7D)()%3B" id="bookmarklet">
+			<a href="javascript: (function%20()%20%7B%0A%09javascript%3A%20(function%20()%20%7B%0A%09%09const%20sections%20%3D%20%5B%20%2F%2F%20Sections%20to%20pull%20from%20JSON%0A%09%09%09'cookTime'%2C%0A%09%09%09'image'%2C%0A%09%09%09'name'%2C%0A%09%09%09'prepTime'%2C%0A%09%09%09'recipeIngredient'%2C%0A%09%09%09'recipeInstructions'%2C%0A%09%09%09'recipeYield'%2C%0A%09%09%09'totalTime'%2C%0A%09%09%5D%3B%0A%0A%09%09%2F%2F%20Pull%20JSON%20from%20%3Chead%3E%0A%09%09var%20scrapedJSON%20%3D%20%7B%7D%3B%0A%09%09var%20scrapedRecipe%20%3D%20%7B%7D%3B%0A%09%09const%20scripts%20%3D%20document.getElementsByTagName(%22script%22)%3B%0A%09%09for%20(let%20i%20%3D%200%3B%20i%20%3C%20scripts.length%3B%20i%2B%2B)%20%7B%0A%09%09%09const%20s%20%3D%20scripts%5Bi%5D%3B%0A%0A%09%09%09if%20(s.getAttribute('type')%20%3D%3D%20%22application%2Fld%2Bjson%22)%20%7B%0A%09%09%09%09scrapedJSON%20%3D%20JSON.parse(s.innerText)%3B%0A%0A%09%09%09%09%2F%2Fallrecipes%20returns%20an%20array%0A%09%09%09%09if%20(!Array.isArray(scrapedJSON))%20%7B%0A%09%09%09%09%09scrapedJSON%20%3D%20%5BscrapedJSON%5D%3B%20%2F%2F%20a%20bit%20cheeky%0A%09%09%09%09%7D%0A%0A%09%09%09%09scrapedJSON%20%3D%20scrapedJSON.filter(item%20%3D%3E%20%7B%0A%09%09%09%09%09return%20item%5B%22%40type%22%5D%20%3D%3D%20'Recipe'%3B%0A%09%09%09%09%7D)%3B%0A%0A%09%09%09%09if%20(scrapedJSON.length)%20%7B%0A%09%09%09%09%09scrapedRecipe%20%3D%20scrapedJSON%5B0%5D%3B%0A%09%09%09%09%09break%3B%0A%09%09%09%09%7D%0A%09%09%09%7D%0A%0A%09%09%7D%0A%0A%09%09%2F%2F%20Select%20items%20from%20JSON%0A%09%09var%20recipe%20%3D%20%7B%7D%3B%0A%09%09for%20(let%20i%20%3D%200%3B%20i%20%3C%20Object.keys(scrapedRecipe).length%3B%20i%2B%2B)%20%7B%0A%09%09%09const%20key%20%3D%20Object.keys(scrapedRecipe)%5Bi%5D%3B%0A%09%09%09if%20(sections.some(v%20%3D%3E%20key%20%3D%3D%3D%20(v)))%20%7B%0A%09%09%09%09recipe%5Bkey%5D%20%3D%20scrapedRecipe%5Bkey%5D%3B%0A%09%09%09%7D%0A%09%09%7D%0A%0A%09%09window.open(%60http%3A%2F%2Flocalhost%3A5501%2F%3Fr%3D%24%7BencodeURIComponent(JSON.stringify(recipe))%7D%60)%3B%0A%09%7D)()%3B%0A%7D)()" id="bookmarklet">
 				★&nbsp;&nbsp;Cookblock Bookmarklet
 			</a>
 		</div>

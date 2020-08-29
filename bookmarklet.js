@@ -1,66 +1,52 @@
 javascript: (function () {
 	javascript: (function () {
-		var sections = document.getElementsByTagName("SECTION");
-
-		var headings = [
-			'ingredient',
-			'ingredients',
-			'method',
-			'recipe',
-			'directions', //allrecipes
-			'instructions',
-			'prep' //allrecipes
-		];
-		
-		var avoid = [
-			'2000',
-			'2001',
-			'2002',
-			'2003',
-			'2004',
-			'2005',
-			'2006',
-			'2007',
-			'2008',
-			'2009',
-			'2010',
-			'2011',
-			'2012',
-			'2013',
-			'2014',
-			'2015',
-			'2016',
-			'2017',
-			'2018',
-			'2019',
-			'2020',
-			'2021',
-			'2022',
-			'2023',
-			'2024',
-			'comment',
-			'magazine',
-			'close dialog',
-			'subscribe',
-			'$',
-			'recommended',
-			'people', //taste
-			'recipes'
+		const sections = [ // Sections to pull from JSON
+			'cookTime',
+			'image',
+			'name',
+			'prepTime',
+			'recipeIngredient',
+			'recipeInstructions',
+			'recipeYield',
+			'totalTime',
 		];
 
-		var b = '';
+		// Pull JSON from <head>
+		var scrapedJSON = {};
+		var scrapedRecipe = {};
+		const scripts = document.getElementsByTagName("script");
+		for (let i = 0; i < scripts.length; i++) {
+			const s = scripts[i];
 
-		for (let i = 0; i < sections.length; i++) {
-			const e = sections[i].innerText;
-			if (headings.some(v => e.toLowerCase().includes(v))) {
-				if (!avoid.some(v => e.toLowerCase().includes(v))) {
-					b += e.trim() + '\n'.replace(/\n{3,}/g, '\n');
+			if (s.getAttribute('type') == "application/ld+json") {
+				scrapedJSON = JSON.parse(s.innerText);
+
+				//allrecipes returns an array
+				if (!Array.isArray(scrapedJSON)) {
+					scrapedJSON = [scrapedJSON]; // a bit cheeky
+				}
+
+				scrapedJSON = scrapedJSON.filter(item => {
+					return item["@type"] == 'Recipe';
+				});
+
+				if (scrapedJSON.length) {
+					scrapedRecipe = scrapedJSON[0];
+					break;
 				}
 			}
+
 		}
-		console.log(b);
 
+		// Select items from JSON
+		var recipe = {};
+		for (let i = 0; i < Object.keys(scrapedRecipe).length; i++) {
+			const key = Object.keys(scrapedRecipe)[i];
+			if (sections.some(v => key === (v))) {
+				recipe[key] = scrapedRecipe[key];
+			}
+		}
 
-		window.open(`http://http://young-clone.bnr.la/?r=${encodeURIComponent(JSON.stringify(b))}`);
-	})()
-})();
+		window.open(`http://localhost:5501/?r=${encodeURIComponent(JSON.stringify(recipe))}`);
+	})();
+})()
