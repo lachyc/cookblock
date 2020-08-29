@@ -47,6 +47,6 @@ javascript: (function () {
 			}
 		}
 
-		window.open(`http://localhost:5501/?r=${encodeURIComponent(JSON.stringify(recipe))}`);
+		window.open(`http://young-clone.bnr.la/?r=${encodeURIComponent(JSON.stringify(recipe))}`);
 	})();
 })()
