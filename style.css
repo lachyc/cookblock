@@ -6,6 +6,12 @@ img {
 	width: 100%;
 }
 
+
+.ingredient-unit {
+	min-width: 5em;
+	text-align: right;
+}
+
 #recipe, #app {
   width: 25em;
   margin: 1em auto;
