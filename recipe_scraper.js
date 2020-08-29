@@ -37,29 +37,28 @@ if( recipe ) {
 				const denominator = parseInt(fractionArray[1].trim());
 
 				curMeasurement.wholeNumber = wholeNumber;
+				curMeasurement.decimal = parseFloat(wholeNumber + (numerator / denominator));
 				curMeasurement.fraction = fraction[0];
-				curMeasurement.decimal = numerator / denominator;
 				curMeasurement.value = measurementStr.match(/^\d? ?\d+\/?\d? ?/gi)[0]; // match only whole number and fraction
 				curMeasurement.unit = measurementStr.substring(curMeasurement.value.length).trim();
 
 			} else if (decimalPoint) {
-				decimalPoint = decimalPoint[0];
-				let wholeNumber = parseInt(decimalPoint[0]); // first char
-				let decimal = parseInt(decimalPoint.substring(2).trim());
 
-				curMeasurement.wholeNumber = wholeNumber;
-				curMeasurement.decimal = decimal;
-				curMeasurement.value = decimalPoint; // match only whole number and fraction
+				curMeasurement.decimal = parseFloat(decimalPoint[0]);
+				curMeasurement.value = decimalPoint[0]; // match only whole number and fraction
 				curMeasurement.unit = measurementStr.substring(curMeasurement.value.length).trim();
 			}else {
 				const decimalStr = measurementStr.match(/^\d+/gi)[0]; // match number
-				curMeasurement.decimal = parseInt(decimalStr);
+				curMeasurement.decimal = parseFloat(decimalStr);
 				curMeasurement.value = curMeasurement.decimal;
-				curMeasurement.unit = measurementStr.substring(decimalStr.length)
+				curMeasurement.unit = measurementStr.substring(decimalStr.length).trim();
 			}
 
 			if (curMeasurement.unit.match(/teas\w+/gi)) { // broad 'teaspoon' wordings
 				curMeasurement.unit = 'tsp';
+				curMeasurement.type = 'volume';
+				
+				
 			} else if (curMeasurement.unit.match(/tabl\w+/gi)) { // broad 'tablespoon' wordings
 				curMeasurement.unit = 'tbsp';
 			}
