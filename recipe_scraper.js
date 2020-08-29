@@ -19,11 +19,12 @@ if( recipe ) {
 		let curMeasurement = curIngredient.measurement;
 
 		// Match entire measurement string
-		const measurements = ingredient.match(/^\d? ?\d+\/?\d? ?(tbsp|tsp|cup|g|ml|teaspoon|tablespoon|bunch|can)?s?[^()a-z]/gi);
+		const measurements = ingredient.match(/^\d? ?\d+\/?\d?(.\d)? ?(tbsp|tsp|cup|g|ml|teaspoon|tablespoon|bunch|can|kg)?s?[^()a-z]/gi);
 		if (measurements) {
 
-			const measurementStr = measurements[0].trim(); // includes whole number, fraction (if any) and unit
+			const measurementStr = measurements[0].trim(); // includes whole number, fraction (if any), decimal point (if any) and unit
 			const fraction = measurementStr.match(/\d ?\/ ?\d/gi); // match _only_ fraction e.g not whole number
+			let decimalPoint = measurementStr.match(/\d ?\. ?\d/gi); // match _only_ if decimal point
 
 			if (fraction) {
 				const wholeNumberStr = measurementStr.match(/^\d[^\/]/gi); // match only whole value before fraction e.g 1 1/2
@@ -41,7 +42,16 @@ if( recipe ) {
 				curMeasurement.value = measurementStr.match(/^\d? ?\d+\/?\d? ?/gi)[0]; // match only whole number and fraction
 				curMeasurement.unit = measurementStr.substring(curMeasurement.value.length).trim();
 
-			} else {
+			} else if (decimalPoint) {
+				decimalPoint = decimalPoint[0];
+				let wholeNumber = parseInt(decimalPoint[0]); // first char
+				let decimal = parseInt(decimalPoint.substring(2).trim());
+
+				curMeasurement.wholeNumber = wholeNumber;
+				curMeasurement.decimal = decimal;
+				curMeasurement.value = decimalPoint; // match only whole number and fraction
+				curMeasurement.unit = measurementStr.substring(curMeasurement.value.length).trim();
+			}else {
 				const decimalStr = measurementStr.match(/^\d+/gi)[0]; // match number
 				curMeasurement.decimal = parseInt(decimalStr);
 				curMeasurement.value = curMeasurement.decimal;
@@ -59,6 +69,8 @@ if( recipe ) {
 			// No measurement
 			curIngredient.item = ingredient;
 		}
+
+		curIngredient.item = curIngredient.item.trim().charAt(0).toUpperCase() + curIngredient.item.trim().slice(1); // Capitalise first letter
 	}
 
 	page.name = document.getElementById("name");
@@ -92,7 +104,7 @@ if( recipe ) {
 	page.image.setAttribute('src', recipe.image.url || recipe.image);
 
 	recipe.recipeIngredient.forEach(ingredient => {
-		page.recipeIngredient.innerHTML += `<tr><td class="ingredient-unit">${ingredient.measurement.value || ""} ${ingredient.measurement.unit || ""}</td><td>${ingredient.item.text || ingredient.item}</td></tr>`
+		page.recipeIngredient.innerHTML += `<tr><td class="ingredient-unit">${ingredient.measurement.value || ""} ${ingredient.measurement.unit || ""}</td><td class="item-cell">${ingredient.item.text || ingredient.item}</td></tr>`
 	});
 
 	recipe.recipeInstructions.forEach(item => {
