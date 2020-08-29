@@ -6,6 +6,9 @@ img {
 	width: 100%;
 }
 
+li {
+	margin-top: 1em;
+}
 
 .ingredient-unit {
 	min-width: 5em;
