@@ -1,4 +1,13 @@
 "use strict";
+var uz = Unitz.uz;
+Unitz.Classes.addDefaults();
+Unitz.Translations.addDefaults();
+
+const options = {
+	unit: Unitz.OutputUnit.SHORT, // Unit word format
+	min: 0.01, // Min values to display
+	max: 9999 // Max values to display
+};
 
 var url = new URL(window.location.href);
 var recipe = JSON.parse(url.searchParams.get("r"));
@@ -7,6 +16,7 @@ var page = {};
 page.appDiv = document.getElementById("app");
 page.recipeDiv = document.getElementById("recipe");
 
+
 if( recipe ) {
 	page.recipeDiv.hidden = false;
 
@@ -14,54 +24,17 @@ if( recipe ) {
 		const ingredient = recipe.recipeIngredient[i].text || recipe.recipeIngredient[i]; // nytimes returns object with 'text' key
 
 		recipe.recipeIngredient[i] = {};
-		recipe.recipeIngredient[i].measurement = {};
+
 		let curIngredient = recipe.recipeIngredient[i];
-		let curMeasurement = curIngredient.measurement;
+
 
 		// Match entire measurement string
 		const measurements = ingredient.match(/^\d? ?\d+\/?\d?(.\d)? ?(tbsp|tsp|cup|g|ml|teaspoon|tablespoon|bunch|can|kg)?s?[^()a-z]/gi);
 		if (measurements) {
 
 			const measurementStr = measurements[0].trim(); // includes whole number, fraction (if any), decimal point (if any) and unit
-			const fraction = measurementStr.match(/\d ?\/ ?\d/gi); // match _only_ fraction e.g not whole number
-			let decimalPoint = measurementStr.match(/\d ?\. ?\d/gi); // match _only_ if decimal point
-
-			if (fraction) {
-				const wholeNumberStr = measurementStr.match(/^\d[^\/]/gi); // match only whole value before fraction e.g 1 1/2
-				let wholeNumber = 0;
-				if (wholeNumberStr) {
-					wholeNumber = parseInt(wholeNumberStr[0][0]); // get only first char
-				}
-				const fractionArray = fraction[0].split('/');
-				const numerator = parseInt(fractionArray[0].trim());
-				const denominator = parseInt(fractionArray[1].trim());
-
-				curMeasurement.wholeNumber = wholeNumber;
-				curMeasurement.decimal = parseFloat(wholeNumber + (numerator / denominator));
-				curMeasurement.fraction = fraction[0];
-				curMeasurement.value = measurementStr.match(/^\d? ?\d+\/?\d? ?/gi)[0]; // match only whole number and fraction
-				curMeasurement.unit = measurementStr.substring(curMeasurement.value.length).trim();
-
-			} else if (decimalPoint) {
-
-				curMeasurement.decimal = parseFloat(decimalPoint[0]);
-				curMeasurement.value = decimalPoint[0]; // match only whole number and fraction
-				curMeasurement.unit = measurementStr.substring(curMeasurement.value.length).trim();
-			}else {
-				const decimalStr = measurementStr.match(/^\d+/gi)[0]; // match number
-				curMeasurement.decimal = parseFloat(decimalStr);
-				curMeasurement.value = curMeasurement.decimal;
-				curMeasurement.unit = measurementStr.substring(decimalStr.length).trim();
-			}
-
-			if (curMeasurement.unit.match(/teas\w+/gi)) { // broad 'teaspoon' wordings
-				curMeasurement.unit = 'tsp';
-				curMeasurement.type = 'volume';
-				
-				
-			} else if (curMeasurement.unit.match(/tabl\w+/gi)) { // broad 'tablespoon' wordings
-				curMeasurement.unit = 'tbsp';
-			}
+			
+			curIngredient.measurement = uz(measurementStr);
 			curIngredient.item = ingredient.substring(measurementStr.length);
 
 		} else {
@@ -102,12 +75,38 @@ if( recipe ) {
 	}
 	page.image.setAttribute('src', recipe.image.url || recipe.image);
 
-	recipe.recipeIngredient.forEach(ingredient => {
-		page.recipeIngredient.innerHTML += `<tr><td class="ingredient-unit">${ingredient.measurement.value || ""} ${ingredient.measurement.unit || ""}</td><td class="item-cell">${ingredient.item.text || ingredient.item}</td></tr>`
+	// Ingredients 
+	recipe.recipeIngredient.forEach((ingredient, i) => {
+		page.recipeIngredient.innerHTML += `<tr><td id="item-${i}" class="ingredient-unit"></td><td class="item-cell">${ingredient.item}</td></tr>`
+
+		if(ingredient.measurement) {
+			const conversions = ingredient.measurement.conversions(options);
+
+			let measCell = document.getElementById('item-'+i);
+			if(conversions.ranges.length) { 
+				
+				let html = `<select name="cars" id="cars">\
+								<option>\
+									${ingredient.measurement.output({unit: Unitz.OutputUnit.SHORT})}\
+								</option>`;
+				
+				const measurements = conversions.output().split(', ');
+				measurements.forEach(m => {
+					if(m != ingredient.measurement.output({unit: Unitz.OutputUnit.SHORT})) {
+						html += `<option>${m}</option>`;
+					}
+				});
+				
+				html += `</select>`;
+				measCell.innerHTML = html;
+			} else {
+				measCell.classList.add("no-conversion");
+				measCell.innerText = ingredient.measurement.output();
+			}
+		}
 	});
 
 	recipe.recipeInstructions.forEach(item => {
 		page.recipeInstructions.innerHTML += `<li>${item.text || item}</li>`
 	});
-
 }
