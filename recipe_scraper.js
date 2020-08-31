@@ -27,15 +27,14 @@ if( recipe ) {
 
 		let curIngredient = recipe.recipeIngredient[i];
 
-
 		// Match entire measurement string
-		const measurements = ingredient.match(/^\d? ?\d+\/?\d?(.\d)? ?(tbsp|tsp|cup|g|ml|teaspoon|tablespoon|bunch|can|kg)?s?[^()a-z]/gi);
+		const measurements = ingredient.match(/^\d? ?\d+\/?\d?(.\d)? ?x? ?(tbsp|tsp|cup|g|ml|teaspoon|tablespoon|bunch|can|kg)?s?[^()a-z\d]/gi);
 		if (measurements) {
 
-			const measurementStr = measurements[0].trim(); // includes whole number, fraction (if any), decimal point (if any) and unit
+			let measurementStr = measurements[0].trim(); // includes whole number, fraction (if any), decimal point (if any) and unit
 			
-			curIngredient.measurement = uz(measurementStr);
 			curIngredient.item = ingredient.substring(measurementStr.length);
+			curIngredient.measurement = uz(measurementStr.replace('x', '').trim()); // Remove x if present
 
 		} else {
 			// No measurement
