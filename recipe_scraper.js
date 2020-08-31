@@ -30,7 +30,7 @@ if( recipe ) {
 		let curIngredient = recipe.recipeIngredient[i];
 
 		// Match entire measurement string
-		const measurements = ingredient.match(/^\d? ?\d+\/?\d?(.\d)? ?x? ?(tbsp|tsp|cup|g|ml|teaspoon|tablespoon|bunch|can|kg)?s?[^()a-z\d]/gi);
+		const measurements = ingredient.match(/^\d? ?\d+\/?\d?(.\d)? ?x? ?(tbsp|tbs|tsp|cup|g|ml|teaspoon|tablespoon|bunch|can|kg)?s?[^()a-z\d]/gi);
 		if (measurements) {
 
 			let measurementStr = measurements[0].trim(); // includes whole number, fraction (if any), decimal point (if any) and unit
