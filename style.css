@@ -3,19 +3,38 @@
 }
 
 img {
-	width: 100%;
+  width: 100%;
 }
 
 li {
-	margin-top: 1em;
+  margin-top: 1em;
+}
+
+td {
+  border-bottom: 1px solid rgb(212, 212, 212);
 }
 
 .ingredient-unit {
-	min-width: 5em;
-	text-align: right;
+  min-width: 5em;
+  text-align: right;
 }
 
-#recipe, #app {
+select {
+  border: 0px;
+  outline: 0px;
+  background: none;
+  font-size: 1em;
+  /* Align text across all browsers */
+  text-align-last: right;
+  text-align: right;
+  -ms-text-align-last: right;
+  -moz-text-align-last: right;
+  /**********************************/
+}
+
+
+#recipe,
+#app {
   width: 25em;
   margin: 1em auto;
   padding: 1em;
@@ -29,6 +48,10 @@ li {
   text-align: center;
 }
 
+tr .no-conversion {
+	padding-right: 1em;
+}
+
 #bookmarklet {
   background-color: lightseagreen;
   text-align: center;
@@ -40,11 +63,11 @@ li {
 }
 
 @media only screen and (max-width: 450px) {
-	#recipe {
-	  width: 90% !important;
-	}
-  
-	#bookmarklet {
-		width: 80%;
-	}
+  #recipe {
+    width: 90% !important;
+  }
+
+  #bookmarklet {
+    width: 80%;
+  }
 }
