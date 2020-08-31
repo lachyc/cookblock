@@ -5,7 +5,9 @@ Unitz.Translations.addDefaults();
 
 const options = {
 	unit: Unitz.OutputUnit.SHORT, // Unit word format
-	min: 0.01, // Min values to display
+	significant: 2, // decimal places
+	system: Unitz.System.ANY,
+	min: 0.2, // Min values to display
 	max: 9999 // Max values to display
 };
 
