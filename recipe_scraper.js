@@ -71,21 +71,41 @@ if( recipe ) {
 		page.cookTime.innerText = recipe.cookTime.match(/\d+/g)[0] + ' mins';
 	}
 	//page.totalTime.innerText = recipe.totalTime;
-	if( recipe.recipeYield && recipe.recipeYield == "0") {
+	if( recipe.recipeYield && recipe.recipeYield != 0) {
 		page.recipeYieldHeading.hidden = false;
+		page.recipeYield.hidden = false;
 		page.recipeYield.innerText = recipe.recipeYield;
+
+		page.recipeYield.value = recipe.recipeYield;
+		page.recipeYield.max = recipe.recipeYield * 4;
+
+		page.recipeYield.addEventListener('input', dispIngredients);
 	}
 	page.image.setAttribute('src', recipe.image.url || recipe.image);
 
 	// Ingredients 
 	recipe.recipeIngredient.forEach((ingredient, i) => {
-		page.recipeIngredient.innerHTML += `<tr><td id="item-${i}" class="ingredient-unit"></td><td class="item-cell">${ingredient.item}</td></tr>`
+		page.recipeIngredient.innerHTML += `<tr><td id="item-${i}" class="ingredient-unit"></td><td class="item-cell">${ingredient.item}</td></tr>`;
+	});
+
+	dispIngredients();
+
+	recipe.recipeInstructions.forEach(item => {
+		page.recipeInstructions.innerHTML += `<li>${item.text || item}</li>`
+	});
+}
+
+function dispIngredients() {
+	recipe.recipeIngredient.forEach((ingredient, i) => {
 
 		if(ingredient.measurement) {
-			const conversions = ingredient.measurement.conversions(options);
+			const yieldScale = (page.recipeYield.value - recipe.recipeYield) / 10 + 1;
+			
+			let scaledMeasurements = ingredient.measurement.scale( yieldScale );
+			const conversions = scaledMeasurements.conversions(options);
 
 			let measCell = document.getElementById('item-'+i);
-			const measStr = ingredient.measurement.output({options});
+			const measStr = scaledMeasurements.output(options);
 			if(conversions.ranges.length) { 
 				
 				let html = `<select name="item-${i}" id="meas-${i}">\
@@ -105,9 +125,5 @@ if( recipe ) {
 				measCell.innerText = measStr;
 			}
 		}
-	});
-
-	recipe.recipeInstructions.forEach(item => {
-		page.recipeInstructions.innerHTML += `<li>${item.text || item}</li>`
 	});
 }
