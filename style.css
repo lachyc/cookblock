@@ -2,6 +2,10 @@
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
+h1 {
+  text-align: center;
+}
+
 img {
   width: 100%;
 }
@@ -14,8 +18,11 @@ td {
   border-bottom: 1px solid rgb(212, 212, 212);
 }
 
-.ingredient-unit {
-  min-width: 5em;
+input {
+  border: 0px;
+  outline: 0px;
+  background: none;
+  font-size: 1em;
   text-align: right;
 }
 
@@ -32,6 +39,21 @@ select {
   /**********************************/
 }
 
+#overview {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+}
+
+#prep-cont,
+#cook-cont,
+#yield-cont {
+  width: 5em;
+  height: 5em;
+  margin: 1em;
+  padding-bottom: 1em;
+  background-color: lightgray;
+}
 
 #recipe,
 #app {
@@ -48,10 +70,6 @@ select {
   text-align: center;
 }
 
-tr .no-conversion {
-	padding-right: 1em;
-}
-
 #bookmarklet {
   background-color: lightseagreen;
   text-align: center;
@@ -60,6 +78,15 @@ tr .no-conversion {
   width: 16em;
   text-decoration: none;
   color: white;
+}
+
+tr .no-conversion {
+  padding-right: 1em;
+}
+
+.ingredient-unit {
+  min-width: 5em;
+  text-align: right;
 }
 
 @media only screen and (max-width: 450px) {
