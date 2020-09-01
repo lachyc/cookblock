@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,15 +9,24 @@
 	<link rel="stylesheet" href="dev_style.css">
 	<script src="https://cdn.jsdelivr.net/gh/ClickerMonkey/unitz-ts/umd/unitz.min.js"></script>
 </head>
+
 <body class="text-center">
 	<div id="recipe" hidden>
 		<h1 id="name">name</h1>
-		<h3 id="prepTimeHeading" hidden>Prep Time</h3>
-		<span id="prepTime" hidden></span>
-		<h3 id="cookTimeHeading" hidden>Cook Time</h3>
-		<span id="cookTime" hidden></span>
-		<h3 id="recipeYieldHeading" hidden>Yield</h3>
-		<p id="recipeYield"></p>
+		<div id="overview">
+			<div id="prep-cont">
+				<h3 id="prepTimeHeading" hidden>Prep</h3>
+				<span id="prepTime" hidden></span>
+			</div>
+			<div id="cook-cont">
+				<h3 id="cookTimeHeading" hidden>Cook</h3>
+				<span id="cookTime" hidden></span>
+			</div>
+			<div id="yield-cont">
+				<h3 id="recipeYieldHeading" hidden>Yield</h3>
+				<input type="number" id="recipeYield" name="quantity" min="1" hidden>
+			</div>
+		</div>
 		<img id="image" />
 		<h2>Ingredients</h2>
 		<table id="recipeIngredient">
@@ -30,11 +40,13 @@
 			Right-click and bookmark the link below. Open the bookmark while viewing a recipe to trim the fat.
 		</span>
 		<div id="bookmarklet">
-			<a href="javascript:%20(function%20()%20%7B%0A%09javascript%3A%20(function%20()%20%7B%0A%09%09const%20sections%20%3D%20%5B%20%2F%2F%20Sections%20to%20pull%20from%20JSON%0A%09%09%09'cookTime'%2C%0A%09%09%09'image'%2C%0A%09%09%09'name'%2C%0A%09%09%09'prepTime'%2C%0A%09%09%09'recipeIngredient'%2C%0A%09%09%09'recipeInstructions'%2C%0A%09%09%09'recipeYield'%2C%0A%09%09%09'totalTime'%2C%0A%09%09%5D%3B%0A%0A%09%09%2F%2F%20Pull%20JSON%20from%20%3Chead%3E%0A%09%09var%20scrapedJSON%20%3D%20%7B%7D%3B%0A%09%09var%20scrapedRecipe%20%3D%20%7B%7D%3B%0A%09%09const%20scripts%20%3D%20document.getElementsByTagName(%22script%22)%3B%0A%09%09for%20(let%20i%20%3D%200%3B%20i%20%3C%20scripts.length%3B%20i%2B%2B)%20%7B%0A%09%09%09const%20s%20%3D%20scripts%5Bi%5D%3B%0A%0A%09%09%09if%20(s.getAttribute('type')%20%3D%3D%20%22application%2Fld%2Bjson%22)%20%7B%0A%09%09%09%09scrapedJSON%20%3D%20JSON.parse(s.innerText)%3B%0A%0A%09%09%09%09%2F%2Fallrecipes%20returns%20an%20array%0A%09%09%09%09if%20(!Array.isArray(scrapedJSON))%20%7B%0A%09%09%09%09%09scrapedJSON%20%3D%20%5BscrapedJSON%5D%3B%20%2F%2F%20a%20bit%20cheeky%0A%09%09%09%09%7D%0A%0A%09%09%09%09scrapedJSON%20%3D%20scrapedJSON.filter(item%20%3D%3E%20%7B%0A%09%09%09%09%09return%20item%5B%22%40type%22%5D%20%3D%3D%20'Recipe'%3B%0A%09%09%09%09%7D)%3B%0A%0A%09%09%09%09if%20(scrapedJSON.length)%20%7B%0A%09%09%09%09%09scrapedRecipe%20%3D%20scrapedJSON%5B0%5D%3B%0A%09%09%09%09%09break%3B%0A%09%09%09%09%7D%0A%09%09%09%7D%0A%0A%09%09%7D%0A%0A%09%09%2F%2F%20Select%20items%20from%20JSON%0A%09%09var%20recipe%20%3D%20%7B%7D%3B%0A%09%09for%20(let%20i%20%3D%200%3B%20i%20%3C%20Object.keys(scrapedRecipe).length%3B%20i%2B%2B)%20%7B%0A%09%09%09const%20key%20%3D%20Object.keys(scrapedRecipe)%5Bi%5D%3B%0A%09%09%09if%20(sections.some(v%20%3D%3E%20key%20%3D%3D%3D%20(v)))%20%7B%0A%09%09%09%09recipe%5Bkey%5D%20%3D%20scrapedRecipe%5Bkey%5D%3B%0A%09%09%09%7D%0A%09%09%7D%0A%0A%09%09window.open(%60http%3A%2F%2Fyoung-clone.bnr.la%2F%3Fr%3D%24%7BencodeURIComponent(JSON.stringify(recipe))%7D%60)%3B%0A%09%7D)()%3B%0A%7D)()" id="bookmarklet">
+			<a href="javascript:%20(function%20()%20%7B%0A%09javascript%3A%20(function%20()%20%7B%0A%09%09const%20sections%20%3D%20%5B%20%2F%2F%20Sections%20to%20pull%20from%20JSON%0A%09%09%09'cookTime'%2C%0A%09%09%09'image'%2C%0A%09%09%09'name'%2C%0A%09%09%09'prepTime'%2C%0A%09%09%09'recipeIngredient'%2C%0A%09%09%09'recipeInstructions'%2C%0A%09%09%09'recipeYield'%2C%0A%09%09%09'totalTime'%2C%0A%09%09%5D%3B%0A%0A%09%09%2F%2F%20Pull%20JSON%20from%20%3Chead%3E%0A%09%09var%20scrapedJSON%20%3D%20%7B%7D%3B%0A%09%09var%20scrapedRecipe%20%3D%20%7B%7D%3B%0A%09%09const%20scripts%20%3D%20document.getElementsByTagName(%22script%22)%3B%0A%09%09for%20(let%20i%20%3D%200%3B%20i%20%3C%20scripts.length%3B%20i%2B%2B)%20%7B%0A%09%09%09const%20s%20%3D%20scripts%5Bi%5D%3B%0A%0A%09%09%09if%20(s.getAttribute('type')%20%3D%3D%20%22application%2Fld%2Bjson%22)%20%7B%0A%09%09%09%09scrapedJSON%20%3D%20JSON.parse(s.innerText)%3B%0A%0A%09%09%09%09%2F%2Fallrecipes%20returns%20an%20array%0A%09%09%09%09if%20(!Array.isArray(scrapedJSON))%20%7B%0A%09%09%09%09%09scrapedJSON%20%3D%20%5BscrapedJSON%5D%3B%20%2F%2F%20a%20bit%20cheeky%0A%09%09%09%09%7D%0A%0A%09%09%09%09scrapedJSON%20%3D%20scrapedJSON.filter(item%20%3D%3E%20%7B%0A%09%09%09%09%09return%20item%5B%22%40type%22%5D%20%3D%3D%20'Recipe'%3B%0A%09%09%09%09%7D)%3B%0A%0A%09%09%09%09if%20(scrapedJSON.length)%20%7B%0A%09%09%09%09%09scrapedRecipe%20%3D%20scrapedJSON%5B0%5D%3B%0A%09%09%09%09%09break%3B%0A%09%09%09%09%7D%0A%09%09%09%7D%0A%0A%09%09%7D%0A%0A%09%09%2F%2F%20Select%20items%20from%20JSON%0A%09%09var%20recipe%20%3D%20%7B%7D%3B%0A%09%09for%20(let%20i%20%3D%200%3B%20i%20%3C%20Object.keys(scrapedRecipe).length%3B%20i%2B%2B)%20%7B%0A%09%09%09const%20key%20%3D%20Object.keys(scrapedRecipe)%5Bi%5D%3B%0A%09%09%09if%20(sections.some(v%20%3D%3E%20key%20%3D%3D%3D%20(v)))%20%7B%0A%09%09%09%09recipe%5Bkey%5D%20%3D%20scrapedRecipe%5Bkey%5D%3B%0A%09%09%09%7D%0A%09%09%7D%0A%0A%09%09window.open(%60http%3A%2F%2Fyoung-clone.bnr.la%2F%3Fr%3D%24%7BencodeURIComponent(JSON.stringify(recipe))%7D%60)%3B%0A%09%7D)()%3B%0A%7D)()"
+				id="bookmarklet">
 				★&nbsp;&nbsp;Cookblock Bookmarklet
 			</a>
 		</div>
 	</div>
 </body>
 <script src="recipe_scraper.js"></script>
+
 </html>
