@@ -1,4 +1,5 @@
 "use strict";
+
 var uz = Unitz.uz;
 Unitz.Classes.addDefaults();
 Unitz.Translations.addDefaults();
@@ -22,11 +23,10 @@ page.recipeDiv = document.getElementById("recipe");
 if( recipe ) {
 	page.recipeDiv.hidden = false;
 
+	// Parse ingredients + measurements
 	for (let i = 0; i < recipe.recipeIngredient.length; i++) {
 		const ingredient = recipe.recipeIngredient[i].text || recipe.recipeIngredient[i]; // nytimes returns object with 'text' key
-
 		recipe.recipeIngredient[i] = {};
-
 		let curIngredient = recipe.recipeIngredient[i];
 
 		// Match entire measurement string
@@ -43,7 +43,8 @@ if( recipe ) {
 			curIngredient.item = ingredient;
 		}
 
-		curIngredient.item = curIngredient.item.trim().charAt(0).toUpperCase() + curIngredient.item.trim().slice(1); // Capitalise first letter
+		// Capitalise first letter
+		curIngredient.item = curIngredient.item.trim().charAt(0).toUpperCase() + curIngredient.item.trim().slice(1); 
 	}
 
 	page.name = document.getElementById("name");
@@ -84,26 +85,24 @@ if( recipe ) {
 			const conversions = ingredient.measurement.conversions(options);
 
 			let measCell = document.getElementById('item-'+i);
+			const measStr = ingredient.measurement.output({options});
 			if(conversions.ranges.length) { 
 				
-				const ingredientStr = ingredient.measurement.output({options});
-				let html = `<select name="cars" id="cars">\
+				let html = `<select name="item-${i}" id="meas-${i}">\
 								<option>\
-									${ingredientStr}\
+									${measStr}\
 								</option>`;
 				
-				const measurements = conversions.output(options).split(', ');
-				measurements.forEach(m => {
-					if(m != ingredientStr) {
-						html += `<option>${m}</option>`;
-					}
+				const conversionsStr = conversions.output(options).split(', ');
+				conversionsStr.forEach(m => {
+					if(m != measStr) html += `<option>${m}</option>`;
 				});
 				
 				html += `</select>`;
 				measCell.innerHTML = html;
 			} else {
 				measCell.classList.add("no-conversion");
-				measCell.innerText = ingredient.measurement.output();
+				measCell.innerText = measStr;
 			}
 		}
 	});
