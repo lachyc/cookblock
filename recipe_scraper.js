@@ -86,14 +86,15 @@ if( recipe ) {
 			let measCell = document.getElementById('item-'+i);
 			if(conversions.ranges.length) { 
 				
+				const ingredientStr = ingredient.measurement.output({options});
 				let html = `<select name="cars" id="cars">\
 								<option>\
-									${ingredient.measurement.output({unit: Unitz.OutputUnit.SHORT})}\
+									${ingredientStr}\
 								</option>`;
 				
-				const measurements = conversions.output().split(', ');
+				const measurements = conversions.output(options).split(', ');
 				measurements.forEach(m => {
-					if(m != ingredient.measurement.output({unit: Unitz.OutputUnit.SHORT})) {
+					if(m != ingredientStr) {
 						html += `<option>${m}</option>`;
 					}
 				});
